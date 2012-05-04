@@ -1,0 +1,109 @@
+$base-grid-size: 11px
+$box-edge: $base-grid-size * 6
+$box-side-width: 8.66px / 30px * $box-edge
+
+*
+	margin: 0
+	padding: 0
+	border: 0
+	font-family: League Gothic
+.services
+	position: relative
+	margin-left: 170px
+	margin-top: 100px
+.service
+	margin-left: -$base-grid-size
+	float: left
+	position: relative
+	//min-height: 101px
+	.slider
+		bottom: $box-edge / 5 - ($base-grid-size)
+		position: absolute
+		text-align: center
+		width: $box-edge
+		.slider-view
+			height: ($box-edge / 5) * 8
+			background: none
+			//border: 1px solid black
+			-webkit-touch-callout: none
+			-webkit-user-select: none
+			-khtml-user-select: none
+			-moz-user-select: none
+			-ms-user-select: none
+			user-select: none
+			.handle
+				bottom: 0px
+				position: absolute
+				width: $box-edge
+				//border: 1px solid red
+				overflow: visible
+				img
+					margin-bottom: -16px
+					margin-top: -16px
+					background: url(slider.png) no-repeat center top
+			.ui-slider-handle
+				width: $box-edge * 1.2
+				left: -$box-edge * 0.1
+				
+.instance-container
+	width: $box-edge + $box-side-width
+	height: $box-edge / 2 + $base-grid-size / 2
+.instance
+	position: absolute
+	width: $box-edge + (8.66px / 30px * $box-edge)
+	height: $box-edge * 1.5
+	div
+		position: absolute
+		font-size: 18px //$base-grid-size * 1.8
+	.front
+		background-color: #666666
+		height: $box-edge
+		width: $box-edge
+		top: $box-edge / 2
+		color: #e6e6e6
+		span
+			//margin-top: 10px
+			//vertical-align: -10px
+		img
+			position: absolute
+			left: $box-edge / 2 - 11px // 11px is half img width
+			top: -11px
+			z-index: 1
+	.top
+		background-color: #999999
+		line-height: $box-edge / 2
+		text-align: center
+		width: $box-edge
+		-webkit-transform: skew(-30deg,0deg)
+		-webkit-transform-origin: center bottom
+	.side
+		background-color: #4d4d4d
+		height: $box-edge
+		width: $box-side-width
+		top: $box-edge / 2
+		left: $box-edge
+		-webkit-transform: skew(0deg,-60deg)
+		-webkit-transform-origin: left center
+.add-pad
+	position: absolute
+	-webkit-transform: skew(-30deg,0deg)
+	-webkit-transform-origin: center bottom
+	line-height: $box-edge / 2
+	width: $box-edge
+	border: 2px dashed #999999
+	color: #999999
+	bottom: -$box-edge / 2 - ($base-grid-size * 3)
+	left: -$box-side-width - $base-grid-size / 2
+	text-align: center
+
+.instance-0
+	z-index: 0
+.instance-1
+	z-index: 1
+.instance-2
+	z-index: 2
+.instance-3
+	z-index: 3
+.instance-4
+	z-index: 4
+

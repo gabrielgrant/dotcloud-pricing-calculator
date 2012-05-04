@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css" /> 
+  <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.19.custom.css" rel="stylesheet" />
+  <script src="/jquery-1.7.2.min.js"></script>
+  <!--script type="text/javascript" src="js/jquery-ui-1.8.19.custom.js"></script-->
+  <script type="text/javascript" src="js/jquery-ui-1.9m7.js"></script>
+  <script src="/ember-0.9.6.js"></script>
+  <script type="text/javascript" src="js/jquery-ui-ember.js"></script>
+  <script type="text/javascript" src="/d3.js"></script>
+</head>
+<body>
+
+<script type="text/x-handlebars">
+
+{{#view App.ServicesView id="services-view" class="services"}}
+  <a href="#" {{action "addService"}}>Add Service</a>
+  <p>Total cost: {{ App.ServicesController.totalDollarsMonthly }}</p>
+  {{#each services}}
+    {{#view App.ServiceView serviceBinding="this" class="service"}}
+    <p>${{ service.dollarsMonthlyStr }} / mth</p>
+      {{#each service.instances}}
+        {{#view App.InstanceView instanceBinding="this" class="instance-container"}}
+        <div class="instance" {{bindAttr style="boxStyle"}} {{action "popInstance" target="instance.service"}}>
+            <div class="front" {{bindAttr style="parentView.frontStyle"}}></div>
+            <div class="top"><span>{{...service.vscaleStr}}</span></div>
+            <div class="side"></div>
+        </div>
+        {{/view }}
+      {{/each}}
+    <!--div class="slider" {{bindAttr style="sliderStyle"}}><img src="slider.png" /></div-->
+    {{#if showAddPad}}
+    <div class="add-pad" {{bindAttr style="addPadStyle"}} {{action "addInstance" target="service"}}> + </div>
+    {{/if}}
+    <!--a href="#" {{action "scaleUp" target="service"}} style="margin-left: 80px">Scale Up</a><br />
+    <a href="#" {{action "scaleDown" target="service"}} style="margin-left: 80px">Scale Down</a-->
+    &nbsp;<br />&nbsp;
+    <div class="slider" {{bindAttr style="sliderStyle"}}>
+    {{#view App.VScaleSlider serviceBinding="service" class="slider-view"}}
+      {{#view App.VScaleSliderHandle serviceBinding="service"}}
+      <img src="slider-ghost.png" />
+      {{/view }}
+    {{/view }}
+    </div>
+    {{/view }}
+  {{/each}}
+{{/view }}
+
+</script>
+
+<script src="/app.js"></script>
+
+
+</body>
+</html>
