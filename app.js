@@ -38,9 +38,9 @@ App.Service = Ember.Object.extend({
 
     // setter
     } else {
-      ember_assert(
+      Ember.assert(
         'attempting to scale to ' + value + ': above ' + App.maxVScale, value <= App.maxVScale);
-      ember_assert(
+      Ember.assert(
         'attempting to scale ' + value + ': below ' + App.vscaleUnit, value >= App.vscaleUnit);
       this.set('_vscale', value);
       return value;
@@ -300,7 +300,7 @@ App.VerticalSlider = Ember.View.extend({
         var range = this.get('max') - this.get('min')
         var step = this.get('step');
         var steps = Math.floor(range / step) - 1;
-        ember_assert('improper step size: ' + this.get('step'), range % step == 0);
+        Ember.assert('improper step size: ' + this.get('step'), range % step == 0);
         var positionStep = this.get('maxPosition') / steps;
         var offset = Math.floor(positionStep / 2)
         var curBucket = {
@@ -361,7 +361,7 @@ App.VerticalSlider = Ember.View.extend({
         var bucket = buckets.findProperty('value', value)
         var position = bucket.position;
         console.log(position);
-        ember_assert('invalid value: ' + value, typeof position != "undefined");
+        Ember.assert('invalid value: ' + value, typeof position != "undefined");
         return position;
     },
     valueChanged: function(){
@@ -387,11 +387,11 @@ App.VerticalSlider = Ember.View.extend({
         // setter
         } else {
             var maxPosition = this.get('maxPosition');
-          ember_assert(
+          Ember.assert(
             'attempting to set position to ' + value + ': above ' + maxPosition,
             value <= maxPosition);
           var minPosition = this.get('minPosition');
-          ember_assert(
+          Ember.assert(
             'attempting to set position to ' + value + ': below ' + minPosition,
             value >= minPosition);
           if (this.get('orientation') == 'vertical'){
@@ -433,10 +433,10 @@ App.VerticalSlider = Ember.View.extend({
         // setter
         } else {
             var maxOffset = this.get('_maxOffset');
-          ember_assert(
+          Ember.assert(
             'attempting to set offset to ' + value + ': above ' + maxOffset, value <= maxOffset);
           var minOffset = this.get('_minOffset');
-          ember_assert(
+          Ember.assert(
             'attempting to set offset to ' + value + ': below ' + minOffset, value >= minOffset);
           var newOffset = {};
           newOffset[relevantOffset] = value;
