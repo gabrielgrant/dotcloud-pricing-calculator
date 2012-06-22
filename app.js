@@ -125,21 +125,6 @@ App.ServicesController = Ember.Object.create({
       }, 0)
       return rawCost.toFixed(2);
     }.property('services.@each.dollarsMonthly'),
-    vscaleOptions: [
-        32,
-        64,
-        128,
-        192,
-        256,
-        384,
-        512,
-        768,
-        1024,
-        1536,
-        2048,
-        3072,
-        4096
-    ]
 });
 
 
@@ -157,8 +142,8 @@ App.ServiceView = Ember.View.extend({
   service: null,
   
   // constants mirrored from style.sass
-  BASE_GRID_SIZE: 11,
-  BOX_EDGE: 11 /* base-grid-size */ * 6,
+  BASE_GRID_SIZE: data.BASE_GRID_SIZE,
+  BOX_EDGE: data.BOX_EDGE,
   
   remove: function(){
     App.ServicesController.removeService(this.service)
