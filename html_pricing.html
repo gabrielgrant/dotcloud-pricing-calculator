@@ -2,11 +2,19 @@
 <html>
 <head>
   <link rel="stylesheet" type="text/css" href="style.css" /> 
+  <script type="text/javascript">
+  if (!ENV){
+    var ENV = {};
+  }
+  console.log(ENV);
+  ENV.RAISE_ON_DEPRECATION = true;
+  //ENV.CP_DEFAULT_CACHEABLE = true;
+  </script>
   <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.19.custom.css" rel="stylesheet" />
   <script src="/jquery-1.7.2.min.js"></script>
   <!--script type="text/javascript" src="js/jquery-ui-1.8.19.custom.js"></script-->
   <script type="text/javascript" src="js/jquery-ui-1.9m7.js"></script>
-  <script src="/ember-0.9.6.js"></script>
+  <script src="/ember-0.9.8.1.js"></script>
   <script type="text/javascript" src="js/jquery-ui-ember.js"></script>
   <script type="text/javascript" src="/d3.js"></script>
 </head>
