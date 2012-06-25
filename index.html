@@ -18,31 +18,95 @@
   <script type="text/javascript" src="/js/browser-detect.js"></script>
 </head>
 <body>
-
 <script type="text/x-handlebars">
 
+<div id="add-services">
+  <h2>Add services</h2>
+  <div  id="service-types">
+    <div class="description">
+      <p>
+        All services cost the same &cent;0.6 an hour per 32MB block of memory,
+        but their default memory allocations differ.<br />
+        <a href="http://docs.dotcloud.com/guides/scaling/#scaling-vertically">Read more about setting memory limits.</a>
+      </p>
+    </div>
+    <!--
+    {{#each App.ServiceTypesController.stackTypes}}
+      {{#view App.StackTypeView stackTypeBinding="this" class="stack-type"}}
+        <a href="#" {{action "click"}}>{{stackType.name}}</a>
+      {{/view}}
+    {{/each}}
+    -->
+    {{#each App.ServiceTypesController.serviceTypes}}
+      {{#view App.ServiceTypeView serviceTypeBinding="this" class="service-type"}}
+        <a href="#" {{action "addService"}}>
+          <img {{bindAttr src="serviceType.iconURL"}} {{bindAttr src="serviceType.name"}}/></a>
+      {{/view}}
+    {{/each}}
+  </div>
+</div>
+
 {{#view App.ServicesView id="services-view" class="services"}}
-  <a href="#" {{action "addService"}}>Add Service</a>
-  <p>Total cost: {{ App.ServicesController.totalDollarsMonthly }}</p>
+  <p><a href="#">Help</a></p>
+  {{App.ServicesController.instancesCount}}
+  <div id="summary-display">
+    <div id="summary-display-subpanes">
+      <div class="everything-included subpane">
+        <h2>Everything Included</h2>
+        <ul>
+          <li>Disk, Bandwidth, CPU, etc.</li>
+          <li>24h monitoring and support</li>
+        </ul>
+        <p>More questions? <a href="#faq">Get answers</a></p>
+      </div>
+      <div class="price subpane">
+        <p class="price-text">
+          <span class="dollar-sign">$</span><span class="dollars">{{ monthlyDollarsOnly }}</span><span class="cents">{{ monthlyCentsOnly }}</span><span class="per-month">/month</span>
+        </p>
+        <p class="reminder">sandbox apps cost nothing</p>
+        <p class="cta-button">
+          <a href="#">Start Deploying for Free</a>
+        </p>
+      </div>
+      <div class="savings subpane">
+        <h2>Too much? Too little?</h2>
+        <ul>
+          <li>Student and startup discounts</li>
+          <li>Custom monitoring &amp; support</li>
+        </ul>
+        <p><a href="#contact">Get in touch!</a></p>
+      </div>
+    </div><!-- summary display subpanes -->
+  </div>
+  <div id="services-display">
   {{#each services}}
     {{#view App.ServiceView serviceBinding="this" class="service"}}
-    <p>${{ service.dollarsMonthlyStr }} / mth</p>
       {{#each service.instances}}
         {{#view App.InstanceView instanceBinding="this" class="instance-container"}}
         <div class="instance" {{bindAttr style="boxStyle"}} {{action "popInstance" target="instance.service"}}>
-            <div class="front" {{bindAttr style="parentView.frontStyle"}}></div>
-            <div class="top"><span>{{...service.vscaleStr}}</span></div>
-            <div class="side"></div>
+            <div class="front" {{bindAttr style="parentView.frontStyle"}}>
+                {{#if showPriceLabel }}
+                <div class="price-label">
+                  <p>
+                    <img {{bindAttr src="parentView.service.serviceType.iconURL"}} {{bindAttr src="parentView.service.serviceType.name"}}/> <br />
+                    ${{ parentView.service.dollarsMonthlyStr }}<!--&nbsp;/&nbsp;mth-->
+                  </p>
+                </div>
+                {{/if }}
+            </div>
+            <div class="top" {{bindAttr style="parentView.topStyle"}}><span>{{...service.vscaleStr}}</span></div>
+            <div class="side" {{bindAttr style="parentView.sideStyle"}}></div>
         </div>
         {{/view }}
       {{/each}}
-    <!--div class="slider" {{bindAttr style="sliderStyle"}}><img src="slider.png" /></div-->
     {{#if showAddPad}}
     <div class="add-pad" {{bindAttr style="addPadStyle"}} {{action "addInstance" target="service"}}> + </div>
     {{/if}}
     <!--a href="#" {{action "scaleUp" target="service"}} style="margin-left: 80px">Scale Up</a><br />
     <a href="#" {{action "scaleDown" target="service"}} style="margin-left: 80px">Scale Down</a-->
-    &nbsp;<br />&nbsp;
+    <!-- this space is here to make sure the bottom of the service container is
+         pushed down for each additional service instance -->
+    &nbsp;
     <div class="slider" {{bindAttr style="sliderStyle"}}>
     {{#view App.VScaleSlider serviceBinding="service" class="slider-view"}}
       {{#view App.VScaleSliderHandle serviceBinding="service"}}
@@ -52,6 +116,24 @@
     </div>
     {{/view }}
   {{/each}}
+  {{!#unless services.length}}
+  {{#if showSelectServicesTip}}
+    <p id="select-services-tip" class="tip">
+      Begin estimating your cost by clicking the services you need.
+    </p>
+  {{/if}}
+  {{#if showInstancesTip}}
+    <p id="instances-tip" class="tip">
+      Add extra instances of a service for redundancy or concurrency. Click an instance to remove.
+    </p>
+  {{/if}}
+  {{!#if showVScaleTip}}
+    <p id="vscale-services-tip" class="tip" {{bindAttr style="vscaleTipStyle"}}>
+      Drag to scale vertically for increased performance.
+    </p>
+  {{!/if}}
+  {{!/unless}}
+  </div><!-- end of services-display-->
 {{/view }}
 
 </script>

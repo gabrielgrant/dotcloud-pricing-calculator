@@ -19,6 +19,10 @@ App.Service = Ember.Object.extend({
     this.addInstance();
   },
   
+  numInstances: function(){
+    return this.get('instances').length
+  }.property('instances.length'),
+  
   addInstance: function(){
     var instance = App.Instance.create({service: this});
     this.get('instances').pushObject(instance);
@@ -96,16 +100,42 @@ App.Instance = Ember.Object.extend({
     vscaleBinding: 'service.vscale',
 });
 
+App.BaseComponent = Ember.Object.extend({
+  id: function(){
+    return this.get('name').toLowerCase()
+  }.property(),
+  iconURL: function(){
+    return '/img/' + this.get('type') + '/' + this.get('id') + '.png'
+  }.property('id')
+});
+
+App.ServiceType = App.BaseComponent.extend({
+});
+
+App.StackType = App.BaseComponent.extend({
+  serviceTypes: function(){
+    // return the ServiceType objects for this stack type's serviceTypeIDs
+    return this.get('serviceTypeIDs').map(function(item){
+      return App.ServiceTypesController.get('serviceTypes').findProperty('id', item)
+    });
+  }.property()
+});
+
 // controllers
 
 App.ServicesController = Ember.Object.create({
     init: function(){
+        this._super()
         this.set('services', []);
-        this.addService();
     },
-    addService: function(){
+    addNewService: function(){
       var service = App.Service.create();
+      this.addService(service);
+      return service;
+    },
+    addService: function(service){
       service.addObserver('instances.length', function() {
+        console.log('service instances length change');
         console.log(service.getPath('instances'));
         console.log(this);
         if (service.getPath('instances.length') == 0){
@@ -113,6 +143,13 @@ App.ServicesController = Ember.Object.create({
         }
       });
       this.get('services').pushObject(service);
+    },
+    addServiceFromType: function(serviceType){
+      var service = App.Service.create({
+        serviceType: serviceType
+      });
+      service.set('vscale', serviceType.initialMemory);
+      this.addService(service);
     },
     removeService: function(service){
       this.get('services').removeObject(service);
@@ -123,16 +160,153 @@ App.ServicesController = Ember.Object.create({
       }, 0)
       return rawCost.toFixed(2);
     }.property('services.@each.dollarsMonthly'),
+    instancesCount: function(){
+      var services = this.get('services');
+      var instancesCount = services.reduce(function(previousValue, service){
+        return previousValue + service.getPath('instances.length');
+      }, 0);
+      console.log('instancesCount: ' + instancesCount);
+      return instancesCount;
+    }.property('services.@each.numInstances'),
+    vscaleOptions: data.vscaleOptions
+});
+
+// i have a property that depends on an array of arrays, i.e. it needs to be recomputed when an item is added or removed from any of the sub-arrays
+// i've declared it as function(){...}.property('topArray.@each.subArray.length', 'topArray.length')
+// it updates fine when a new subarray is created, but is ignoring changes in the lengths of the subarrays
+// am i just doing something stupid?
+
+App.ServiceTypesController = Ember.Object.create({
+  serviceTypes: data.serviceTypes.map(function(item){
+    return App.ServiceType.create(item)
+  }),
+  stackTypes: data.stackTypes.map(function(item){
+    return App.StackType.create(item)
+  })
 });
 
 
 // views
 
+App.ServiceSelectorView = Ember.View.extend({
+  init: function(){
+    // components is a list of all service types and preconfigured stack types
+    // any component can be added to an application, resulting in one or more
+    // services being inserted.
+    this._super();
+    serviceTypes = App.ServiceTypesController.get('serviceTypes');
+    stackTypes = App.ServiceTypesController.get('stackTypes');
+    var components = serviceTypes + stackTypes;
+    this.set('components', components);
+  }
+});
+
+App.ComponentView = Ember.View.extend({
+
+});
+
+App.StackTypeView = Ember.View.extend({
+  click: function(event){
+    var self = this
+    // ok, so in the process of debugging my previous problem (missing View.element), I've come across some other strangeness:
+    // if i wrap my click handler in a setTimeout, it seems to get processed twice.
+    //setTimeout(function(){
+      self.getPath('stackType.serviceTypes').forEach(function(serviceType, idx){
+        App.ServicesController.addServiceFromType(serviceType);
+      });
+    //}, 100);
+  }
+});
+
+App.ServiceTypeView = Ember.View.extend({
+  serviceTypesBinding: 'App.ServicesController.services',
+  addService: function(event){
+    console.log('click!');
+    serviceType = this.get('serviceType');
+    App.ServicesController.addServiceFromType(serviceType);
+    return false;
+  }
+});
+
 App.ServicesView = Ember.View.extend({
-  addService: function(){
-    App.ServicesController.addService();
+  hasScaled: false,
+  addNewService: function(){
+    var service = App.ServicesController.addNewService();
+    var self = this;
+    service.addObserver('vscale', function(){
+      self.set('hasScaled', true);
+    });
   },
-  servicesBinding: 'App.ServicesController.services'
+  servicesBinding: 'App.ServicesController.services',
+  monthlyDollarsOnly: function(){
+    return App.ServicesController.get('totalDollarsMonthly').toString().split('.')[0];
+  }.property('App.ServicesController.totalDollarsMonthly'),
+  monthlyCentsOnly: function(){
+    return App.ServicesController.get('totalDollarsMonthly').toString().split('.')[1];
+  }.property('App.ServicesController.totalDollarsMonthly'),
+  selectServicesTipHasShown: false,
+  showSelectServicesTip: function(){
+    if (this.get('selectServicesTipHasShown')){
+      return false;
+    }
+    var show = !this.getPath('services.length');
+    this.set('selectServicesTipHasShown', show);
+    return show;
+  }.property('services.length'),
+  instancesTipHasShown: false,
+  showInstancesTip: function(){
+    console.log('checking if instances tip has shown');
+    //if (this.get('instancesTipHasShown')){
+    //  console.log('instances tip has shown');
+    //  return false;
+    //}
+    var show = (App.ServicesController.get('instancesCount') == 1);
+    this.set('instancesTipHasShown', show);
+    return show;
+  }.property('App.ServicesController.instancesCount'),
+  vscaleTipHasShown: false,
+  showVScaleTip: function(){
+    if (this.get('vscaleTipHasShown')){
+      return false;
+    }
+    var show = !this.get('hasScaled') && (App.ServicesController.get('instancesCount') == 2);
+    console.log('showVScaleTip: ' + show);
+    this.set('vscaleTipHasShown', show);
+    return show;
+  }.property('App.ServicesController.instancesCount', 'hasScaled'),
+  vscaleTipStyle: function(){
+    if (!this.get('showVScaleTip')){
+      return 'visibility: hidden; margin-top:0; margin-left: 0;';
+    }
+    // the tip needs to be positioned next to the handle of the last service
+    // but the new handle hasn't been added to the DOM yet, so start by
+    // positioning next to the first handle
+    var handles = this.$('.handle');
+    var handle = $(handles[0]);
+    var vscaleTip = $('#vscale-services-tip');
+    console.log('vscaleTip:');
+    console.log(vscaleTip);
+    var topDelta = handle.offset().top - vscaleTip.offset().top - 7;
+    var leftDelta = handle.offset().left - vscaleTip.offset().left;
+    leftDelta = leftDelta + (handle.width() / 2) + 15;
+    console.log([topDelta, leftDelta]);
+    console.log(this.get('services').length);
+    if (this.get('services').length != 2){
+      // two instances of the first service
+      console.log('two instances of the first service');
+      topDelta += 25;
+      leftDelta -= 25;
+    } else {
+      // one instance of each of two services
+      console.log('one instance of each of two services');
+      leftDelta += data.BOX_EDGE + data.BASE_GRID_SIZE;
+    }
+    console.log([topDelta, leftDelta]);
+    var style = 'margin-top: ' + topDelta + 'px; margin-left: ' + leftDelta + 'px;'
+    return style;
+    console.log('vascale tip style. handle:');
+    console.log(handle);
+  }.property('App.ServicesController.instancesCount')
 });
 
 App.ServiceView = Ember.View.extend({
@@ -180,10 +354,16 @@ App.ServiceView = Ember.View.extend({
     return 'height: ' + height + 'px';
   }.property('service.vscale'),
   topStyle: function(){
-  
+    var vscale = this.getPath('service.vscale');
+    var vUnits = App.ServicesController.get('vscaleOptions').indexOf(vscale);
+    var top = -(vUnits - 4) * this.get('BASE_GRID_SIZE');
+    return 'top: ' + top + 'px';
   }.property('service.vscale'),
   sideStyle: function(){
-  
+    var vscale = this.getPath('service.vscale');
+    var vUnits = 2 + App.ServicesController.get('vscaleOptions').indexOf(vscale);
+    var height = vUnits * this.get('BASE_GRID_SIZE');
+    return 'height: ' + height + 'px';
   }.property('service.vscale'),
 });
 
@@ -198,7 +378,20 @@ App.InstanceView = Ember.View.extend({
   boxStyle: function(){
     var left = 'left: ' + (-25 * this.get('index')) + 'px';
     return left
-  }.property('index')
+  }.property('index'),
+  showPriceLabel: function(){
+    var instances = this.getPath('parentView.service.instances');
+    var instanceID = instances.indexOf(this.get('instance'));
+    // only show the price label for the first instance
+    return instanceID == 0;
+    /*
+    // only show the price label for the last instance
+    var numInstances = instances.length;
+    console.log('show price label');
+    console.log(instanceID + ' ' + numInstances);
+    return instanceID + 1 == numInstances;
+    */
+  }.property('parentView.service.instances.length')
 })
 
 
@@ -230,20 +423,49 @@ App.VerticalSlider = Ember.View.extend({
     max: 100,
     step: 1,
     orientation: 'vertical',
+    _element: null,
     didInsertElement: function(){
-        console.log(this.get('element'));
+        var element = this.get('element')
+        console.log(element);
         console.log(this.$());
-        var handle = this.$('.handle');
-        handle.height(handle.height());
+        if (element === null){
+          // WTF...why doesn't this.element exist the second time?
+          // http://jsfiddle.net/jVvYL/1/
+          // HACK: find and set element manually
+          console.log('WTF?');
+          var sliders = this.$('.slider-view');
+          var element = sliders[sliders.length - 1];
+          console.log(sliders);
+          console.log(this);
+          this.set('_element', element);
+        }
+        var handles = this.$('.handle');
+        var handle = this.$(handles[handles.length - 1]);
+        //handle.height(handle.height());
+        //handle.height(0);
+        handle.height(handle.children().height());
         this.set('handle', handle);
         this.valueChanged();
         console.log('inserted!');
         console.log(handle);
     },
+    element: function(){
+      var e = this.get('_element');
+      return e;
+    }.property('_element'),
     dragStart: function(event){
+        console.log('in dragStart');
+        console.log(event);
+        console.log(Object.keys(event));
+        console.log(event.originalEvent);
+        console.log(Object.keys(event.originalEvent));
+        console.log(event.originalEvent.pageY);
+        console.log('page coords');
+        console.log(event.originalEvent.pageX);
+        console.log(event.originalEvent.pageY);
         var handle = this.get('handle')
-        this.set('_startX', event.originalEvent.x);
-        this.set('_startY', event.originalEvent.y);
+        this.set('_startX', event.originalEvent.pageX);
+        this.set('_startY', event.originalEvent.pageY);
         this.set('_startOffset', handle.offset());
         this.set('_startOffset', this.get('_offset'));
         console.log(this.get('_buckets'));
@@ -255,15 +477,60 @@ App.VerticalSlider = Ember.View.extend({
         event.originalEvent.dataTransfer.setDragImage(dragImage, 10, 10);
         */
     },
+
+    // Firfox doesn't implement drag events consistently, so we have to special-case
+    // it and use the "dragOver" event, which doesn't work as well.
+    //
     drag: function(event){
+      console.log('in drag');
+      console.log('browser');
+      console.log(BrowserDetect);
+      console.log(Object.keys(BrowserDetect));
+      console.log(BrowserDetect.browser);
+      if (BrowserDetect.browser == 'Firefox'){
+        return
+      }
+      else {
+        return this.realDrag(event);
+      }
+    },
+    dragOver: function(event){
+      console.log('in dragOver');
+      console.log('browser');
+      console.log(BrowserDetect);
+      if (BrowserDetect.browser != 'Firefox'){
+        return
+      }
+      else {
+        console.log('firefox');
+        return this.realDrag(event);
+      }
+    },
+    realDrag: function(event){
         // we need to base the change on the delta of mouse movement
         // rather than actual position, because the movement should be
         // independant of where on the handle the click occurs
-        var deltaY = event.originalEvent.y - this.get('_startY');
+        
+        console.log('in real drag.');
+        var startY = this.get('_startY');
+        var deltaY = event.originalEvent.pageY - startY;
         var handle = this.get('handle');
         var startOffset = this.get('_startOffset');
         var newOffset = startOffset + deltaY
+        
+        console.log('startY:');
+        console.log(startY);
+        console.log('eventY:');
+        console.log(event.originalEvent.pageY);
+        console.log('startOffset:');
+        console.log(startOffset);
+        console.log('deltaY:');
+        console.log(deltaY);
+        console.log('newOffset:');
+        console.log(newOffset);
         var bucket = this._offsetToBucket(newOffset);
+        console.log('bucket:');
+        console.log(bucket);
         if (bucket.position != this.get('position')){
             this.set('position', bucket.position);
             if (this.change){
@@ -273,8 +540,15 @@ App.VerticalSlider = Ember.View.extend({
         //this.set('_offset', newOffset);
     },
     _offsetToBucket: function(offset){
+        console.log('in offsetToBucket');
+        console.log(offset);
         var position = this._offsetToPosition(offset);
-        var bucket = this.get('_buckets').find(function(bucket){
+        console.log('buckets:');
+        var buckets = this.get('_buckets');
+        console.log(buckets);
+        console.log('position');
+        console.log(position);
+        var bucket = buckets.find(function(bucket){
             return bucket.catchmentBottom <= position && position <= bucket.catchmentTop;
         });
         return bucket;
@@ -282,7 +556,7 @@ App.VerticalSlider = Ember.View.extend({
     _buckets: function(){
         var range = this.get('max') - this.get('min')
         var step = this.get('step');
-        var steps = Math.floor(range / step) - 1;
+        var steps = Math.floor(range / step);
         Ember.assert('improper step size: ' + this.get('step'), range % step == 0);
         var positionStep = this.get('maxPosition') / steps;
         var offset = Math.floor(positionStep / 2)
@@ -296,7 +570,7 @@ App.VerticalSlider = Ember.View.extend({
             value: this.get('min')}
         var buckets = [curBucket];
         var top, bottom, position;
-        while (buckets.length < steps){
+        while (buckets.length <= steps){
             top = Math.round((buckets.length * positionStep) + offset);
             bottom = curBucket.top + 1;
             position = Math.round((top + bottom) / 2);

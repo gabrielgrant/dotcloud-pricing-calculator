@@ -2,29 +2,248 @@ $base-grid-size: 11px
 $box-edge: $base-grid-size * 6
 $box-side-width: 8.66px / 30px * $box-edge
 
+$instance-vertical-offset: $box-edge / 2 + $base-grid-size / 2
+
+$dotcloud-blue: #285A9E
+$base-pane-background: #E6E6F2
+
+
 *
 	margin: 0
 	padding: 0
 	border: 0
+body
+	width: 940px
+	height: 100%
+	background: #CCC
 	font-family: League Gothic
+#add-services
+	position: absolute
+	top: 0
+	bottom: 0
+	h2
+		font-weight: 200
+		color: #202045
+		text-align: right
+		text-transform: uppercase
+	padding: 10px
+	background: $base-pane-background
+	width: 340px
+#service-types
+	position: absolute
+	width: 320px
+	top: 50px
+	bottom: 10px
+	overflow: auto
+	padding: 10px
+	background: url('/img/components-background.png')
+	-moz-box-shadow: inset 0px 1px 10px rgba(0,0,0,0.5)
+	-webkit-box-shadow: inset 0px 1px 10px rgba(0,0,0,0.5)
+	box-shadow: inset 0px 1px 10px rgba(0,0,0,0.5)
+	.description
+		display: inline-block
+		-moz-box-shadow: 0px 3px 10px rgba(0,0,0,0.5)
+		-webkit-box-shadow: 0px 3px 10px rgba(0,0,0,0.5)
+		box-shadow: 0px 3px 10px rgba(0,0,0,0.5)
+		margin: 10px
+		padding: 5px 10px
+		background: #EEE
+		p
+			font-family: Open Sans Condensed
+			font-size: 14px
+	.service-type
+		display: inline-block
+		width: 60px
+		margin: 10px
+		padding: 12px 9px 4px 9px
+		border: 1px solid #333
+		-webkit-border-radius: 6px
+		-moz-border-radius: 6px
+		border-radius: 6px
+		background-image: linear-gradient(bottom, #A0A0A0 0%, #CCCCCC 100%)
+		background-image: -o-linear-gradient(bottom, #A0A0A0 0%, #CCCCCC 100%)
+		background-image: -moz-linear-gradient(bottom, #A0A0A0 0%, #CCCCCC 100%)
+		background-image: -webkit-linear-gradient(bottom, #A0A0A0 0%, #CCCCCC 100%)
+		background-image: -ms-linear-gradient(bottom, #A0A0A0 0%, #CCCCCC 100%)
+		-moz-box-shadow: 0px 1px 10px rgba(0,0,0,0.5)
+		-webkit-box-shadow: 0px 1px 10px rgba(0,0,0,0.5)
+		box-shadow: 0px 1px 10px rgba(0,0,0,0.5)
+		&:hover
+			border: 1px solid rgba(37, 155, 255, 0.5)
+			-moz-box-shadow: 0px 0px 15px rgba(37, 155, 255, 0.5), 0px 1px 10px rgba(0,0,0,0.5)
+			-webkit-box-shadow: 0px 0px 15px rgba(37, 155, 255, 0.5), 0px 1px 10px rgba(0,0,0,0.5)
+			box-shadow: 0px 0px 15px rgba(37, 155, 255, 0.5), 0px 1px 10px rgba(0,0,0,0.5)
+		&:active
+			background-image: linear-gradient(bottom, #CCCCCC 0%, #A0A0A0 100%)
+			background-image: -o-linear-gradient(bottom, #CCCCCC 0%, #A0A0A0 100%)
+			background-image: -moz-linear-gradient(bottom, #CCCCCC 0%, #A0A0A0 100%)
+			background-image: -webkit-linear-gradient(bottom, #CCCCCC 0%, #A0A0A0 100%)
+			background-image: -ms-linear-gradient(bottom, #CCCCCC 0%, #A0A0A0 100%)
+			-moz-box-shadow: inset 0px 0px 25px rgba(37, 155, 255, 0.5), inset 0px 1px 5px rgba(0,0,0,0.3)
+			-webkit-box-shadow: inset 0px 0px 25px rgba(37, 155, 255, 0.5), inset 0px 1px 5px rgba(0,0,0,0.3)
+			box-shadow: inset 0px 0px 25px rgba(37, 155, 255, 0.5), inset 0px 1px 5px rgba(0,0,0,0.3)
 .services
-	position: relative
-	margin-left: 170px
-	margin-top: 100px
+	position: absolute
+	background: #EEE
+	left: 360px
+	right: 0
+	top: 0
+	bottom: 0
+	min-height: 560px
+	-moz-box-shadow: inset 2px 0px 3px rgba(0,0,0,0.15)
+	-webkit-box-shadow: inset 2px 0px 3px rgba(0,0,0,0.15)
+	box-shadow: inset 2px 0px 3px rgba(0,0,0,0.15)
+	#services-display
+		min-width: 460px
+		margin-left: 120px
+		margin-top: 180px
+		height: $instance-vertical-offset * 6 + $box-edge
+	#summary-display
+		position: absolute
+		bottom: 0
+		height: 120px
+		background: $base-pane-background
+		width: 100%
+		font-family: Open Sans
+		-moz-box-shadow: 1px -2px 3px rgba(0,0,0,0.15)
+		-webkit-box-shadow: 1px -2px 3px rgba(0,0,0,0.15)
+		box-shadow: 1px -2px 3px rgba(0,0,0,0.15)
+		#summary-display-subpanes
+			width: 606px
+			margin: -10px auto
+			ul
+				color: #333
+				list-style: none
+				margin-top: 3px
+				margin-left: 3px
+				margin-bottom: 4px
+		.subpane
+			float: left
+			background: #DCDCE6
+			border: 1px solid #ABABB3
+			padding: 5px
+			-moz-box-shadow: 0px 2px 3px rgba(0,0,0,0.15)
+			-webkit-box-shadow: 0px 2px 3px rgba(0,0,0,0.15)
+			box-shadow: 0px 2px 3px rgba(0,0,0,0.15)
+		.everything-included.subpane, .savings.subpane
+			font-size: 11px
+			margin-top: 20px
+			width: 170px
+			h2
+				font-size: 14px
+		.everything-included.subpane
+			border-right: none
+			-webkit-border-top-left-radius: 4px
+			-webkit-border-bottom-left-radius: 4px
+			-moz-border-radius-topleft: 4px
+			-moz-border-radius-bottomleft: 4px
+			border-top-left-radius: 4px
+			border-bottom-left-radius: 4px
+		.savings.subpane
+			border-left: none
+			-webkit-border-top-right-radius: 4px
+			-webkit-border-bottom-right-radius: 4px
+			-moz-border-radius-topright: 4px
+			-moz-border-radius-bottomright: 4px
+			border-top-right-radius: 4px
+			border-bottom-right-radius: 4px
+		.price.subpane
+			width: 230px
+			-webkit-border-radius: 4px
+			-moz-border-radius: 4px
+			border-radius: 4px
+			text-align: center
+			background: #edf6ff /* Old browsers */
+			background: -moz-radial-gradient(center, ellipse cover, #edf6ff 0%, #98bede 100%) /* FF3.6+ */
+			background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#edf6ff), color-stop(100%,#98bede)) /* Chrome,Safari4+ */
+			background: -webkit-radial-gradient(center, ellipse cover, #edf6ff 0%,#98bede 100%) /* Chrome10+,Safari5.1+ */
+			background: -o-radial-gradient(center, ellipse cover, #edf6ff 0%,#98bede 100%) /* Opera 12+ */
+			background: -ms-radial-gradient(center, ellipse cover, #edf6ff 0%,#98bede 100%) /* IE10+ */
+			background: radial-gradient(center, ellipse cover, #edf6ff 0%,#98bede 100%) /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#edf6ff', endColorstr='#98bede',GradientType=1 ) /* IE6-9 fallback on horizontal gradient */
+			.price-text
+				margin: auto
+				height: 70px
+				.dollar-sign, .dollars, .cents, .per-month
+					display: inline-block
+					line-height: 1em
+					font-weight: 600
+					vertical-align: top
+				.dollar-sign, .dollars, .cents
+					color: #01276F
+					text-shadow: darken(#01276F, 20%) 0 -1px, darken(#01276F, 10%) 0px -2px, white 0 1px, rgba(255, 255, 255, 0.5) 0 2px
+				.dollar-sign
+					font-size: 35px
+				.dollars
+					font-size: 70px
+					margin-top: -5px
+				.cents
+					font-size: 40px
+				.per-month
+					font-size: 12px
+					font-weight: 100
+					margin-top: 42px
+					margin-left: -42px
+			.cta-button
+				clear: both
+			.reminder
+				clear: both
+				font-size: 10px
+				font-weight: 600
+	.tip
+		font-family: Open Sans
+		position: relative
+		width: 200px
+		background: #DDD
+		border: 2px solid #222
+		padding: 10px 20px
+		-moz-box-shadow: 0px 3px 6px rgba(0,0,0,0.25)
+		-webkit-box-shadow: 0px 3px 6px rgba(0,0,0,0.25)
+		box-shadow: 0px 3px 6px rgba(0,0,0,0.25)
+		-webkit-border-radius: 4px
+		-moz-border-radius: 4px
+		border-radius: 4px
+		&:before, &:after
+			position: absolute
+			content: ''
+			height: 0
+			width: 0
+			top: 50%
+			left: 0
+			margin-top: -15px
+			border-top: 15px solid transparent
+			border-bottom: 15px solid transparent
+		&:before
+			margin-left: -15px
+			border-right: 15px solid #222
+		&:after
+			margin-left: -12px
+			border-right: 15px solid #DDD
+		&#select-services-tip
+			margin-left: -120px /* compensate for parent's margin */ - 5px
+		&#instances-tip
+			margin-left: 60px
+			top: 70px
+		&#vscale-services-tip
+			position: absolute
+			top: 0
+			left: 0
+
 .service
 	margin-left: -$base-grid-size
 	float: left
 	position: relative
-	//min-height: 101px
+	line-height: 40px
 	.slider
-		bottom: $box-edge / 5 - ($base-grid-size)
+		bottom: -$base-grid-size * 2
 		position: absolute
 		text-align: center
-		width: $box-edge
+		//width: $box-edge
+		width: 0
 		.slider-view
-			height: ($box-edge / 5) * 8
+			height: $base-grid-size * 13 + $base-grid-size * 2
+			width: 0
 			background: none
-			//border: 1px solid black
 			-webkit-touch-callout: none
 			-webkit-user-select: none
 			-khtml-user-select: none
@@ -35,11 +254,9 @@ $box-side-width: 8.66px / 30px * $box-edge
 				bottom: 0px
 				position: absolute
 				width: $box-edge
-				//border: 1px solid red
 				overflow: visible
 				img
 					margin-bottom: -16px
-					margin-top: -16px
 					background: url(img/slider.png) no-repeat center top
 			.ui-slider-handle
 				width: $box-edge * 1.2
@@ -47,9 +264,15 @@ $box-side-width: 8.66px / 30px * $box-edge
 				
 .instance-container
 	width: $box-edge + $box-side-width
-	height: $box-edge / 2 + $base-grid-size / 2
+	height: $instance-vertical-offset
 .instance
+	transition: opacity 0.25s ease-in-out
+	-webkit-transition: opacity 0.25s ease-in-out
+	-moz-transition: opacity 0.25s ease-in-out
 	position: absolute
+	&:hover
+		opacity: 0.5
+		cursor: pointer
 	width: $box-edge + (8.66px / 30px * $box-edge)
 	height: $box-edge * 1.5
 	div
@@ -58,17 +281,53 @@ $box-side-width: 8.66px / 30px * $box-edge
 	.front
 		background-color: #666666
 		height: $box-edge
+		//-webkit-transition: height 0.5s ease
 		width: $box-edge
-		top: $box-edge / 2
-		color: #e6e6e6
-		span
-			//margin-top: 10px
-			//vertical-align: -10px
+		bottom: 0
 		img
 			position: absolute
 			left: $box-edge / 2 - 11px // 11px is half img width
 			top: -11px
 			z-index: 1
+		.price-label
+			padding: 5px 10px
+			margin-left: $box-side-width - 2px  /* for perspective */
+			width: $box-edge - 2px /* border */ - 20px /* padding */
+			img
+				position: static
+				width: 40px
+			border: 1px solid black
+			-webkit-border-radius: 3px
+			-moz-border-radius: 3px
+			border-radius: 3px
+			position: absolute
+			z-index: 10
+			top: -$box-edge - 50px /* image */
+			line-height: 1.3em
+			text-align: center
+			background: $dotcloud-blue
+			background: -moz-linear-gradient(-90deg, #448CCB, $dotcloud-blue)
+			background: -webkit-gradient(linear, left top, left bottom, from(#448CCB), to($dotcloud-blue))
+			text-shadow: rgba(0,0,0,0.5) -1px 0, rgba(0,0,0,0.3) 0 -1px, rgba(255,255,255,0.5) 0 1px, rgba(0,0,0,0.3) -1px -2px
+			color: #EEE
+			&:before, &:after
+				position: absolute
+				bottom: 0
+				margin-bottom: -8px
+				left: 50%
+				margin-left: -10px
+				content: '.'
+				color: transparent
+				height: 0
+				width: 0
+				border-left: 10px solid transparent
+				border-right: 10px solid transparent
+				text-shadow: none
+			&:before
+				margin-bottom: -10px
+				border-top: 10px solid black
+			&:after
+				border-top: 10px solid $dotcloud-blue
 	.top
 		background-color: #999999
 		line-height: $box-edge / 2
@@ -76,18 +335,28 @@ $box-side-width: 8.66px / 30px * $box-edge
 		width: $box-edge
 		-webkit-transform: skew(-30deg,0deg)
 		-webkit-transform-origin: center bottom
+		-moz-transform: skew(-30deg,0deg)
+		-moz-transform-origin: center bottom
+		top: 0px
+		//-webkit-transition: top 0.5s ease
 	.side
 		background-color: #4d4d4d
 		height: $box-edge
 		width: $box-side-width
-		top: $box-edge / 2
+		bottom: 0
+		//top: $box-edge / 2
 		left: $box-edge
 		-webkit-transform: skew(0deg,-60deg)
 		-webkit-transform-origin: left center
+		-moz-transform: skew(0deg,-60deg)
+		-moz-transform-origin: left center
+		//-webkit-transition: height 0.5s ease
 .add-pad
 	position: absolute
 	-webkit-transform: skew(-30deg,0deg)
 	-webkit-transform-origin: center bottom
+	-moz-transform: skew(-30deg,0deg)
+	-moz-transform-origin: center bottom
 	line-height: $box-edge / 2
 	width: $box-edge
 	border: 2px dashed #999999
@@ -95,7 +364,15 @@ $box-side-width: 8.66px / 30px * $box-edge
 	bottom: -$box-edge / 2 - ($base-grid-size * 3)
 	left: -$box-side-width - $base-grid-size / 2
 	text-align: center
-
+	transition: text-shadow 0.25s ease-in-out, box-shadow 0.25s ease-in-out, border 0.25s ease-in-out, color 0.25s ease-in-out
+	-webkit-transition: text-shadow 0.25s ease-in-out, box-shadow 0.25s ease-in-out, border 0.25s ease-in-out, color 0.25s ease-in-out
+	-moz-transition: text-shadow 0.25s ease-in-out, box-shadow 0.25s ease-in-out, border 0.25s ease-in-out, color 0.25s ease-in-out
+	&:hover
+		text-shadow: 0 0 10px rgba($dotcloud-blue, 0.5)
+		box-shadow: 0 0 10px rgba($dotcloud-blue, 0.5), inset 0 0 5px rgba($dotcloud-blue, 0.5)
+		border: 2px solid rgba($dotcloud-blue, 0.5)
+		color: rgba($dotcloud-blue, 0.5)
+		cursor: pointer
 .instance-0
 	z-index: 0
 .instance-1
