@@ -1,6 +1,4 @@
-window.App = Ember.Application.create({ 
-  name: "Example Application",
-  logo: "http://sympodial.com/images/logo.png",
+window.App = Ember.Application.create({
   centsPerMBHour: 0.5 / 32
 });
 
